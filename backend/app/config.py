@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     DB_USER: str = Field(default="", description="MySQL Username")
     DB_PASSWORD: str = Field(default="", description="MySQL Password")
     DB_NAME: str = Field(default="crisismap_db", description="MySQL Database Name")
+    DB_SSL: bool = False
 
     # Allowed CORS Origins (comma-separated string in .env)
     CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"

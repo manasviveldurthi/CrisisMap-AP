@@ -14,27 +14,41 @@ _engine = None
 _SessionLocal = None
 
 
+
 def get_engine():
     """
     Returns an existing SQLAlchemy engine or creates a new one
     using the configured settings.
     """
     global _engine, _SessionLocal
+
     if _engine is None:
         if not settings.is_db_configured:
-            logger.warning("Database credentials not fully set in .env; engine not initialized.")
+            logger.warning(
+                "Database credentials not fully set in .env; engine not initialized."
+            )
             return None
+
+        connect_args = {"ssl": {}} if settings.DB_SSL else {}
 
         _engine = create_engine(
             settings.database_url,
-            pool_pre_ping=True,      # Tests connection liveness on checkout
-            pool_recycle=3600,       # Recycles connections every hour to avoid MySQL timeout
+            pool_pre_ping=True,
+            pool_recycle=3600,
             pool_size=10,
             max_overflow=20,
-            echo=False               # Set to True only for verbose SQL debugging
+            echo=False,
+            connect_args=connect_args
         )
-        _SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=_engine)
+
+        _SessionLocal = sessionmaker(
+            autocommit=False,
+            autoflush=False,
+            bind=_engine
+        )
+
     return _engine
+
 
 
 def init_db():
